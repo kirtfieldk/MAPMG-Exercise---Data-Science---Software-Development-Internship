@@ -18,7 +18,7 @@ def hello_world():
 def getConsumers():
     if request.method == 'GET':
 
-        return retrieve_applicants()
+        return jsonify(retrieve_applicants())
     if request.method == 'POST':
         response = request.get_json() if request.is_json else "Not valid"
         applicant = Applicant(response['first'], response['last'],

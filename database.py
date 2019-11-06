@@ -20,10 +20,19 @@ def create_teable():
 
 
 def retrieve_applicants():
+    resultArray = []
     conn = sqlite3.connect('applicant.db')
     c = conn.cursor()
-    c.execute('SELECT * FROM applicants')
+    c.execute("SELECT * FROM applicants")
     appArray = c.fetchall()
-    print(appArray[0])
-    return "Tree"
+    for i in appArray:
+        resultArray.append({
+            "firstName": i[0],
+            "last_name": i[1],
+            "school": i[2],
+            "position": i[3],
+            "degree": i[4]
+
+        })
+    return resultArray
     conn.close()
