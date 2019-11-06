@@ -6,6 +6,10 @@
 from flask import Flask, request, jsonify
 from Applicant import Applicant
 from database import retrieve_applicants
+from database import add_application
+from database import create_teable
+from database import close_db
+from database import update_application
 app = Flask(__name__)
 
 
@@ -17,21 +21,27 @@ def hello_world():
 @app.route("/api/v1/applicants", methods=['GET', 'POST'])
 def getConsumers():
     if request.method == 'GET':
-
         return jsonify(retrieve_applicants())
     if request.method == 'POST':
         response = request.get_json() if request.is_json else "Not valid"
-        applicant = Applicant(response['first'], response['last'],
-                              response['school'], response['position'], response['degree'])
-        applicant.addToDatabase()
-        return jsonify(applicant.toJson())
+        # print(len(response))
+        # response = [response]
+        for x in response:
+            add_application(x)
+        return jsonify({
+            'success': True,
+            'count': len(response),
+            'data': response
+        })
     return "Hello world"
 
 
-@app.route('/api/v1/applicants/<id>', methods=['PUT', 'DELETE'])
-def modifyApplicants():
+@app.route('/api/v1/applicants/<app_id>', methods=['PUT', 'DELETE'])
+def modifyApplicants(app_id):
     if request.method == 'PUT':
-        return "PUT request"
+        response = request.get_json() if request.is_json else "Not valid"
+
+        return jsonify(update_application(app_id, response))
     if request.method == 'DELETE':
         return "DELETE request"
     return "Hello world"
