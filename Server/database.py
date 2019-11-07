@@ -2,12 +2,10 @@
 # Database
 # TODO uploading and retrieving data // Smart Selection
 import sqlite3
-import secrets
 from sqlalchemy import create_engine, update
 from sqlalchemy.orm import sessionmaker
 from applicants import Applicant, Base
 import datetime
-from termcolor import colored, cprint
 
 
 def create_conn():
@@ -69,22 +67,22 @@ def retrieve_applicants():
 
 def update_application(app_id, req):
     session = create_conn()
-    # try:
-    application = session.query(Applicant).filter_by(id=app_id).one()
-    # cprint(req['first_name'], 'green')
-    application.update(req)
-    session.add(application)
-    session.commit()
-    return{
-        'success': True,
-        'count': 1,
-        'data': application.toJson()
-    }
-    # except:
-    #     return ({
-    #         'success': False,
-    #         'msg': 'Unable to find application'
-    #     }), 404
+    try:
+        application = session.query(Applicant).filter_by(id=app_id).one()
+        # cprint(req['first_name'], 'green')
+        application.update(req)
+        session.add(application)
+        session.commit()
+        return{
+            'success': True,
+            'count': 1,
+            'data': application.toJson()
+        }
+    except:
+        return ({
+            'success': False,
+            'msg': 'Unable to find application'
+        }), 404
 
 
 def delete_application(app_id):

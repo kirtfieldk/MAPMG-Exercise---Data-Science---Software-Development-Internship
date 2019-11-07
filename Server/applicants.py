@@ -2,7 +2,6 @@ import sys
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
-from termcolor import colored, cprint
 Base = declarative_base()
 
 
@@ -37,7 +36,6 @@ class Applicant(Base):
         }
 
     def update(self, req):
-        cprint(req, 'green')
         for x in req:
             if x == 'first_name' and req[x] != self.first_name:
                 self.first_name = req[x]
