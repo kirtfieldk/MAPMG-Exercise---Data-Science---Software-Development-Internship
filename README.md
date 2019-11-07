@@ -20,4 +20,4 @@ To use this api:
 
 ## Docker-Compose
 
-I decided to use this specificlly for the volumes tag and Nginx, so port hosting should not be an issue
+I decided to use this specificlly for the volumes tag (automatic updating without rebuilding) and Nginx, so port hosting should not be an issue

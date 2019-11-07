@@ -1,0 +1,51 @@
+[
+  {
+    "first_name": "Keith",
+    "last_name": "Kirtfield",
+    "school": "VCU",
+    "position": "Jr Dev",
+    "degree": "NaN"
+  },
+  {
+    "first_name": "Gabe",
+    "last_name": "Hays",
+    "school": "TCC",
+    "position": "Car Salesman",
+    "degree": "Mathematics"
+  },
+  {
+    "first_name": "John",
+    "last_name": "Doe",
+    "school": "Penn State",
+    "position": "Consultant",
+    "degree": "Science"
+  },
+  {
+    "first_name": "Ronnald",
+    "last_name": "Ray",
+    "school": "VT",
+    "position": "chief",
+    "degree": "Food"
+  },
+  {
+    "first_name": "linsey",
+    "last_name": "Lohan",
+    "school": "Harvard",
+    "position": "CEO of Walmart",
+    "degree": "Self MAde"
+  },
+  {
+    "first_name": "Char",
+    "last_name": "Zard",
+    "school": "Arizona state",
+    "position": "Fisher",
+    "degree": "Enviormental study"
+  },
+  {
+    "first_name": "Billy",
+    "last_name": "Bob",
+    "school": "None",
+    "position": "Physists",
+    "degree": "None"
+  }
+]

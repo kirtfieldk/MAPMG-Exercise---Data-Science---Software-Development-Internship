@@ -19,14 +19,21 @@ def hello_world():
     return ('Hey, we have Flask in a Ddededocker container!')
 
 # GET all applicants
+# POST numerouse or one application
 @app.route("/api/v1/applicants", methods=['GET', 'POST'])
 def getConsumers():
+    print(request.url)
     if request.method == 'GET':
         return jsonify(retrieve_applicants()), 200
     if request.method == 'POST':
         response = request.get_json() if request.is_json else "Not valid"
-        for x in response:
-            add_application(x)
+        if response == 'Not valid':
+            return jsonify({'success': False, 'count': 0, 'msg': 'Expecting Json Objects'}), 400
+        try:
+            for x in response:
+                add_application(x)
+        except TypeError:
+            add_application(response)
         return jsonify({
             'success': True,
             'count': len(response),
@@ -37,11 +44,15 @@ def getConsumers():
         'msg': 'Not a Valid HTTP Request'
     }), 400
 
-
+# PUT update application
+# DELETE delete application
+# GET specific Application
 @app.route('/api/v1/applicants/<app_id>', methods=['PUT', 'DELETE', 'GET'])
 def modifyApplicants(app_id):
     if request.method == 'PUT':
         response = request.get_json() if request.is_json else "Not valid"
+        if response == 'Not valid':
+            return jsonify({'success': False, 'count': 0, 'msg': 'Expecting Json Objects'}), 400
         return jsonify(update_application(app_id, response)), 201
     if request.method == 'DELETE':
         return jsonify(delete_application(app_id)), 200
