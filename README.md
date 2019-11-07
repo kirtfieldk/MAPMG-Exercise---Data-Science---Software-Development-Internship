@@ -9,6 +9,35 @@ To use this api:
 2. For `GET` specific applicants, `DELETE` applications, and `PUT` applications
    > /api/v1/applicants/:app_id
 
+## Formatting
+
+The request body should be simple JSON
+
+```json
+{
+  "first_name": "Keith",
+  "last_name": "Kirtfield",
+  "position": "Dev Intern",
+  "school": "VCU",
+  "degree": "Computer Science"
+}
+```
+
+For the Update request both req below are valid
+
+```json
+({
+  "first_name": "Ryan",
+  "last_name": "Kirtfield",
+  "position": "Dev Intern",
+  "school": "VCU",
+  "degree": "Computer Science"
+},
+{
+  "first_name": "Ryan"
+})
+```
+
 ## The API contains:
 
 - [x] Local instance of SQL database
@@ -21,3 +50,7 @@ To use this api:
 ## Docker-Compose
 
 I decided to use this specificlly for the volumes tag (automatic updating without rebuilding) and Nginx, so port hosting should not be an issue
+
+```
+docker-compose up --build
+```

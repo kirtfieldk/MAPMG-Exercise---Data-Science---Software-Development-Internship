@@ -5,13 +5,13 @@
 
 from flask import Flask, request, jsonify
 from applicants import Applicant
-from database import retrieve_applicants
-from database import add_application
-from database import close_db
-from database import update_application
-from database import delete_application
-from database import retrieve_application
+from database import (retrieve_applicants, add_application,
+                      update_application, delete_application, retrieve_application)
+
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///applicants-collection.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['PROPAGATE_EXCEPTIONS'] = True
 
 
 @app.route('/')
@@ -24,7 +24,7 @@ def hello_world():
 def getConsumers():
     print(request.url)
     if request.method == 'GET':
-        return jsonify(retrieve_applicants()), 200
+        return retrieve_applicants()
     if request.method == 'POST':
         response = request.get_json() if request.is_json else "Not valid"
         if response == 'Not valid':
@@ -53,11 +53,11 @@ def modifyApplicants(app_id):
         response = request.get_json() if request.is_json else "Not valid"
         if response == 'Not valid':
             return jsonify({'success': False, 'count': 0, 'msg': 'Expecting Json Objects'}), 400
-        return jsonify(update_application(app_id, response)), 201
+        return update_application(app_id, response)
     if request.method == 'DELETE':
-        return jsonify(delete_application(app_id)), 200
+        return delete_application(app_id)
     if request.method == 'GET':
-        return jsonify(retrieve_application(app_id))
+        return retrieve_application(app_id)
     return jsonify({
         'success': False,
         'msg': 'Not a Valid HTTP Request'
@@ -65,4 +65,6 @@ def modifyApplicants(app_id):
 
 
 if __name__ == '__main__':
+    from db import db
+    db.init_app(app)
     app.run(debug=True, host='0.0.0.0')
