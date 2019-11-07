@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 Base = declarative_base()
 
 
-class Applcation(Base):
+class Applicant(Base):
     __tablename__ = 'applicants'
 
     id = Column(Integer, primary_key=True)

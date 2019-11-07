@@ -4,12 +4,13 @@
 # TODO   implement Exceptions and status codes
 
 from flask import Flask, request, jsonify
-from Applicant import Applicant
+from applicants import Applicant
 from database import retrieve_applicants
 from database import add_application
 from database import create_teable
 from database import close_db
 from database import update_application
+from database import delete_application
 app = Flask(__name__)
 
 
@@ -40,10 +41,9 @@ def getConsumers():
 def modifyApplicants(app_id):
     if request.method == 'PUT':
         response = request.get_json() if request.is_json else "Not valid"
-
         return jsonify(update_application(app_id, response))
     if request.method == 'DELETE':
-        return "DELETE request"
+        return jsonify(delete_application(app_id))
     return "Hello world"
 
 

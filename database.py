@@ -5,7 +5,7 @@ import sqlite3
 import secrets
 from sqlalchemy import create_engine, update
 from sqlalchemy.orm import sessionmaker
-from Applicant import Applicant, Base
+from applicants import Applicant, Base
 import datetime
 from termcolor import colored, cprint
 
@@ -45,7 +45,7 @@ def retrieve_applicants():
     responseArr = []
     conn = sqlite3.connect('applicants-collection.db')
     c = conn.cursor()
-    c.execute('''SELECT * FROM applicant''')
+    c.execute('''SELECT * FROM applicants''')
     response = c.fetchall()
     for x in response:
         responseArr.append({
@@ -86,6 +86,17 @@ def update_application(app_id, req):
             'school': editApp.school,
             'degree': editApp.degree
         }]
+    }
+
+
+def delete_application(app_id):
+    session = create_conn()
+    deleteApp = session.query(Applicant).filter_by(id=app_id).one()
+    session.delete(deleteApp)
+    session.commit()
+    return {
+        'success': True,
+        'data': []
     }
 
 
