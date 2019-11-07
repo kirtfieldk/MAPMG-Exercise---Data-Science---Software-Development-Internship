@@ -18,27 +18,29 @@ def create_conn():
     return session
 
 
-def create_teable():
-    conn = sqlite3.connect('applicant.db')
-    c = conn.cursor()
-    c.execute('''CREATE TABLE if NOT EXISTS applicants(
-        app_id text UNIQUE,
-        first_name text NOT NULL,
-        last_name text NOT NULL,
-        position text NOT NULL,
-        school text NOT NULL,
-        degree text NOT NULL,
-        PRIMARY KEY (app_id)
-    )''')
-    conn.commit()
-
-
 def add_application(request):
     session = create_conn()
-    applicant = Applicant(first_name=request['first'], last_name=request['last'],
+    applicant = Applicant(first_name=request['first_name'], last_name=request['last_name'],
                           position=request['position'], school=request['school'], degree=request['degree'], date=datetime.datetime.now())
     session.add(applicant)
     session.commit()
+
+
+def retrieve_application(app_id):
+    session = create_conn()
+    try:
+        application = session.query(Applicant).filter_by(id=app_id).first()
+
+        return{
+            'success': True,
+            'count': 1,
+            'data': application.toJson()
+        }
+    except:
+        return {
+            'success': False,
+            'msg': 'Could nt locate applucation'
+        }
 
 
 def retrieve_applicants():
@@ -47,15 +49,15 @@ def retrieve_applicants():
     c = conn.cursor()
     c.execute('''SELECT * FROM applicants''')
     response = c.fetchall()
-    for x in response:
+    for app_id, first_name, last_name, position, school, degree, date in response:
         responseArr.append({
-            'id': x[0],
-            'first_name': x[1],
-            'last_name': x[2],
-            'position': x[3],
-            'school': x[4],
-            'degree': x[5],
-            'date': x[6]
+            'first_name': first_name,
+            'id': app_id,
+            'last_name': last_name,
+            'position': position,
+            'school': school,
+            'degree': degree,
+            'date': date
         })
     # cprint(response, 'green')
     return {
@@ -67,37 +69,39 @@ def retrieve_applicants():
 
 def update_application(app_id, req):
     session = create_conn()
-    editApp = session.query(Applicant).filter_by(id=app_id).one()
-    editApp.first_name = req['first']
-    editApp.last_name = req['last']
-    editApp.position = req['position']
-    editApp.school = req['school']
-    editApp.degree = req['degree']
-    cprint(editApp.first_name, 'green')
-    session.add(editApp)
+    # try:
+    application = session.query(Applicant).filter_by(id=app_id).one()
+    # cprint(req['first_name'], 'green')
+    application.update(req)
+    session.add(application)
     session.commit()
     return{
         'success': True,
         'count': 1,
-        'data': [{
-            'first_name': editApp.first_name,
-            'last_name': editApp.last_name,
-            'position': editApp.position,
-            'school': editApp.school,
-            'degree': editApp.degree
-        }]
+        'data': application.toJson()
     }
+    # except:
+    #     return ({
+    #         'success': False,
+    #         'msg': 'Unable to find application'
+    #     }), 404
 
 
 def delete_application(app_id):
     session = create_conn()
-    deleteApp = session.query(Applicant).filter_by(id=app_id).one()
-    session.delete(deleteApp)
-    session.commit()
-    return {
-        'success': True,
-        'data': []
-    }
+    try:
+        deleteApp = session.query(Applicant).filter_by(id=app_id).one()
+        session.delete(deleteApp)
+        session.commit()
+        return {
+            'success': True,
+            'data': []
+        }
+    except:
+        return ({
+            'success': False,
+            'msg': 'Unable to find application'
+        }), 404
 
 
 def close_db():
