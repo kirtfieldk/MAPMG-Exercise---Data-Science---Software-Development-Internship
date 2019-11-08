@@ -2,26 +2,36 @@
 # Database
 # TODO uploading and retrieving data // Smart Selection
 import sqlite3
-from sqlalchemy import create_engine
 from flask import jsonify
-from sqlalchemy.orm import sessionmaker
 from db import db
-from applicants import Applicant, Base
+from models.applicants import Applicant
+from models.positions import Positions
 import datetime
 
 
 def add_application(request):
-
-    applicant = Applicant(first_name=request['first_name'], last_name=request['last_name'],
-                          position=request['position'], school=request['school'], degree=request['degree'], date=datetime.datetime.now())
-    db.session.add(applicant)
-    db.session.commit()
+    response = []
+    try:
+        for x in request:
+            applicant = Applicant(first_name=x['first_name'], last_name=x['last_name'],
+                                  school=x['school'], degree=x['degree'], date=datetime.datetime.now())
+            position = Positions(title=x['position'], applicant=applicant)
+            response.append(applicant)
+            db.session.add(applicant)
+            db.session.add(position)
+            db.session.commit()
+    except TypeError:
+        return add_application([request])
+    return jsonify({
+        "count": len(response),
+        "success": True,
+        "data": list(map(lambda x: x.toJson(), response))
+    }), 201
 
 
 def retrieve_application(app_id):
     try:
         application = db.session.query(Applicant).filter_by(id=app_id).first()
-
         return jsonify({
             'success': True,
             'count': 1,
@@ -35,26 +45,10 @@ def retrieve_application(app_id):
 
 
 def retrieve_applicants():
-    responseArr = []
-    conn = sqlite3.connect('applicants-collection.db')
-    c = conn.cursor()
-    c.execute('''SELECT * FROM applicants''')
-    response = c.fetchall()
-    for app_id, first_name, last_name, position, school, degree, date in response:
-        responseArr.append({
-            'first_name': first_name,
-            'id': app_id,
-            'last_name': last_name,
-            'position': position,
-            'school': school,
-            'degree': degree,
-            'date': date
-        })
-    # cprint(response, 'green')
     return jsonify({
-        "success": True,
-        "count": len(response),
-        "data": responseArr
+        'success': True,
+        'data': list(map(lambda x: x.toJson(), Applicant.query.all())),
+        'count': len(Applicant.query.all())
     }), 200
 
 
