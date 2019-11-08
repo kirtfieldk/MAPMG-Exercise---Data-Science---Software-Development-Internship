@@ -1,10 +1,10 @@
 # Keith Kirtfield
 # MAPMG Intern Challenge
-# TODO   Flask Server App last, first name, position applied, school, degree program
-# TODO   implement Exceptions and status codes
 
+import sys
 from flask import Flask, request, jsonify
-from applicants import Applicant
+from models.applicants import Applicant
+from models.positions import Positions
 from database import (retrieve_applicants, add_application,
                       update_application, delete_application, retrieve_application)
 
@@ -14,9 +14,14 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 
 
+@app.before_first_request
+def create_tables():
+    db.create_all()
+
+
 @app.route('/')
 def hello_world():
-    return ('Hey, we have Flask in a Ddededocker container!')
+    raeturn('Hey, we have Flask in a Ddededocker container!')
 
 # GET all applicants
 # POST numerouse or one application
@@ -67,4 +72,5 @@ def modifyApplicants(app_id):
 if __name__ == '__main__':
     from db import db
     db.init_app(app)
+
     app.run(debug=True, host='0.0.0.0')
