@@ -10,14 +10,23 @@ import datetime
 
 
 def add_application(request):
-    applicant = Applicant(first_name=request['first_name'], last_name=request['last_name'],
-                          school=request['school'], degree=request['degree'], date=datetime.datetime.now())
-    position = Positions(title=request['position'], applicant=applicant)
-    if position.noMatch():
-        return jsonify({'msg': 'Position is not available'}), 401
-    db.session.add(applicant)
-    db.session.add(position)
-    db.session.commit()
+    response = []
+    try:
+        for x in request:
+            applicant = Applicant(first_name=x['first_name'], last_name=x['last_name'],
+                                  school=x['school'], degree=x['degree'], date=datetime.datetime.now())
+            position = Positions(title=x['position'], applicant=applicant)
+            response.append(applicant)
+            db.session.add(applicant)
+            db.session.add(position)
+            db.session.commit()
+    except TypeError:
+        return add_application([request])
+    return jsonify({
+        "count": len(response),
+        "success": True,
+        "data": list(map(lambda x: x.toJson(), response))
+    }), 201
 
 
 def retrieve_application(app_id):

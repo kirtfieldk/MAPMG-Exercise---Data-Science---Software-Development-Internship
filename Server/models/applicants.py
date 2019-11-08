@@ -11,7 +11,6 @@ class Applicant(db.Model):
     school = db.Column(db.String(250), nullable=False)
     degree = db.Column(db.String(250), nullable=False)
     date = db.Column(db.DateTime)
-    name_list = []
 
     def __init__(self, first_name, last_name, school, degree, date):
         self.first_name = first_name
@@ -19,7 +18,6 @@ class Applicant(db.Model):
         self.school = school
         self.degree = degree
         self.date = date
-        self.name_list = []
 
     def toJson(self):
         return {
@@ -40,8 +38,8 @@ class Applicant(db.Model):
                 self.first_name = req[x]
             if x == 'last_name' and req[x] != self.last_name:
                 self.last_name = req[x]
-            if x == 'position' and req[x] != self.position:
-                self.position = req[x]
+            if x == 'position' and req[x] != self.position[0].title:
+                self.position[0].title = req[x]
             if x == 'school' and req[x] != self.school:
                 self.school = req[x]
             if x == 'degree' and req[x] != self.degree:

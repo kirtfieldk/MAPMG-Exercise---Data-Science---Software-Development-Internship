@@ -8,7 +8,15 @@ class Positions(db.Model):
     title = db.Column(db.String(250))
     app_id = db.Column(db.Integer, db.ForeignKey('applicants.id'))
 
-    positions = ['dev intern', 'fisher', 'cook', 'hvac mechanic']
+    def checkError(self):
+        positions = ['dev intern', 'fisher', 'cook', 'hvac mechanic']
+        match = []
+        for x in positions:
+            if x == self.title:
+                match.append(x)
+        if len(match) == 0:
+            return True
+        return True
 
     def noMatch(self):
         if self.title is None:
