@@ -6,6 +6,7 @@ from flask import jsonify
 from db import db
 from models.applicants import Applicant
 from models.positions import Positions
+from models.errors import Errors
 import datetime
 
 
@@ -38,10 +39,7 @@ def retrieve_application(app_id):
             'data': application.toJson()
         }), 200
     except:
-        return jsonify({
-            'success': False,
-            'msg': 'Could not locate application'
-        }), 404
+        return Errors('Unable To Find Application', 404).toJson()
 
 
 def retrieve_applicants():
@@ -64,10 +62,7 @@ def update_application(app_id, req):
             'data': application.toJson()
         }), 200
     except:
-        return jsonify({
-            'success': False,
-            'msg': 'Unable to find application'
-        }), 404
+        return Errors('Unable To Find Application', 404).toJson()
 
 
 def delete_application(app_id):
@@ -80,7 +75,4 @@ def delete_application(app_id):
             'data': []
         }), 200
     except:
-        return jsonify({
-            'success': False,
-            'msg': 'Unable to find application'
-        }), 404
+        return Errors('Unable To Find Application', 404).toJson()

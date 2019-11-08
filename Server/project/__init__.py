@@ -5,6 +5,7 @@ import sys
 from flask import Flask, request, jsonify
 from models.applicants import Applicant
 from models.positions import Positions
+from models.errors import Errors
 from database import (retrieve_applicants, add_application,
                       update_application, delete_application, retrieve_application)
 from db import db
@@ -34,12 +35,9 @@ def getConsumers():
     if request.method == 'POST':
         response = request.get_json() if request.is_json else "Not valid"
         if response == 'Not valid':
-            return jsonify({'success': False, 'count': 0, 'msg': 'Expecting Json Objects'}), 400
+            return Errors('Expecting A JSON Object', 400).toJson()
         return add_application(response)
-    return jsonify({
-        'success': False,
-        'msg': 'Not a Valid HTTP Request'
-    }), 405
+    return Errors('Not a Valid HTTP Request', 405).toJson()
 
 # PUT update application
 # DELETE delete application
@@ -49,13 +47,10 @@ def modifyApplicants(app_id):
     if request.method == 'PUT':
         response = request.get_json() if request.is_json else "Not valid"
         if response == 'Not valid':
-            return jsonify({'success': False, 'count': 0, 'msg': 'Expecting Json Objects'}), 400
+            return Errors('Expecting A JSON Object', 400).toJson()
         return update_application(app_id, response)
     if request.method == 'DELETE':
         return delete_application(app_id)
     if request.method == 'GET':
         return retrieve_application(app_id)
-    return jsonify({
-        'success': False,
-        'msg': 'Not a Valid HTTP Request'
-    }), 405
+    return Errors('Not a Valid HTTP Request', 405).toJson()
