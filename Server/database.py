@@ -13,6 +13,9 @@ from models.errors import Errors
 def add_application(request):
     response = []
     try:
+        errs = valid_request(request)
+        if len(errs):
+            return jsonify(errs), 400
         for x in request:
             applicant = Applicant(first_name=x['first_name'].lower(), last_name=x['last_name'].lower(),
                                   school=x['school'].lower(), degree=x['degree'].lower(), date=datetime.datetime.now())
@@ -111,15 +114,18 @@ def delete_application(app_id):
 
 def valid_request(req):
     errors = []
-    for req in req:
-        if req['first_name'] is None:
-            errors.append("Please include a first name")
-        if req['last_name'] is None:
-            errors.append("Please include a last name")
-        if req['school'] is None:
-            errors.append("Please include a school")
-        if req['position'] is None:
-            errors.append("Please include a position")
-        if req['degree'] is None:
-            errors.append("Please include a degree")
+    for x in req:
+        try:
+            if x['first_name'] is None:
+                errors.append({'msg': "Please include a first name"})
+            if len(x['last_name']) == 0:
+                errors.append({'msg': "Please include a last name"})
+            if x['school'] is None:
+                errors.append({'msg': "Please include a school"})
+            if x['position'] is None:
+                errors.append({'msg': "Please include a position"})
+            if x['degree'] is None:
+                errors.append({'msg': "Please include a degree"})
+        except KeyError:
+            errors.append({'msg': 'Missing Important Keys'})
     return errors

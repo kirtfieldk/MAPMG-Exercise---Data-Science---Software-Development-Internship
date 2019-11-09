@@ -65,6 +65,18 @@ class TestCase(unittest.TestCase):
             follow_redirects=True
         )
         self.assertEqual(res.status_code, 201)
+
+    def test_post_missing_fields(self):
+        tester = app.test_client(self)
+        res = self.app.post(
+            '/api/v1/applicants',
+            data=json.dumps(dict(
+                school='VCU', position='dev engineer', degree='eyesight')),
+            content_type='application/json',
+            follow_redirects=True
+        )
+        self.assertEqual(res.status_code, 400)
+
     ####################
     ##Testing Routes####
     ####################
@@ -136,18 +148,6 @@ class TestCase(unittest.TestCase):
         )
         self.assertEqual(res.status_code, 200)
 
-    # def test_post_multiple_app(self):
-    #     tester = app.test_client(self)
-    #     res = self.app.post(
-    #         '/api/v1/applicants',
-    #         data=json.dumps(dict(first_name='bar', last_name="Kirtfield",
-    #                              school='VCU', position='dev engineer', degree='eyesight'),
-    #                         dict(first_name='bar', last_name="Kirtfield",
-    #                              school='VCU', position='dev engineer', degree='eyesight')),
-    #         content_type='application/json',
-    #         follow_redirects=True)
-
-    #     self.assertEqual(res.status_code, 201)
     ###########################
     ##TEST POST IN PUT METHOD##
     ###########################
@@ -203,6 +203,46 @@ class TestCase(unittest.TestCase):
             follow_redirects=True
         )
         self.assertEqual(res.status_code, 405)
+
+    ###########################
+    ##TEST SEARCH METHODS######
+    ###########################
+    def test_search_school(self):
+        tester = app.test_client(self)
+        res = self.app.get(
+            '/api/v1/applicants/school/vcu',
+            content_type='application/json',
+            follow_redirects=True
+        )
+        self.assertEqual(res.status_code, 200)
+
+    def test_search_school_no_results(self):
+        tester = app.test_client(self)
+        res = self.app.get(
+            '/api/v1/applicants/school/lslslsls',
+            data=json.dumps(dict()),
+            content_type='application/json',
+            follow_redirects=True
+        )
+        self.assertEqual(res.status_code, 200)
+
+    def test_seach_name(self):
+        tester = app.test_client(self)
+        res = self.app.get(
+            '/api/v1/applicants/firstname/keith',
+            data=json.dumps(dict()),
+            follow_redirects=True
+        )
+        self.assertEqual(res.status_code, 200)
+
+    def test_search_name_no_results(self):
+        tester = app.test_client(self)
+        res = self.app.get(
+            '/api/v1/applicants/firstname/jwoefjei',
+            data=json.dumps(dict()),
+            follow_redirects=True
+        )
+        self.assertEqual(res.status_code, 200)
 
 
 if __name__ == '__main__':

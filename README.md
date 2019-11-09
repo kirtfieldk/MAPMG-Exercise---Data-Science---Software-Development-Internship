@@ -8,6 +8,10 @@ To use this api:
    > /api/v1/applicants
 2. For `GET` specific applicants, `DELETE` applications, and `PUT` applications
    > /api/v1/applicants/:app_id
+3. For `GET` Specific appliations with a name
+   > /api/v1/applicants/firstname/:first_name
+4. For `GET` Specific appliations by school
+   > /api/v1/applicants/school/:school
 
 ## Formatting
 
@@ -53,4 +57,18 @@ I decided to use this specificlly for the volumes tag (automatic updating withou
 
 ```
 docker-compose up --build
+```
+
+## Run
+
+App
+
+```
+pthon app.py
+```
+
+Test
+
+```
+python test.py
 ```
