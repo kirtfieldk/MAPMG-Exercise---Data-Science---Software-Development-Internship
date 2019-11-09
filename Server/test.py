@@ -1,19 +1,21 @@
-from project import app, db
-from flask import json
 import unittest
 import os
+from flask import json
+from project import app, db
 
 
-# ###############
+#################
 ###TEST CASES####
 #################
 TEST_DB = "applicants-collection"
 
-print(os.path)
-
 
 class TestCase(unittest.TestCase):
      # executed prior to each test
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
+
     def setUp(self):
         app.config['TESTING'] = True
         app.config['WTF_CSRF_ENABLED'] = False
@@ -21,16 +23,51 @@ class TestCase(unittest.TestCase):
         # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + \
         #     os.path.join(app.config['BASEDIR'], TEST_DB)
         self.app = app.test_client()
-        # db.drop_all()
-        # db.create_all()
+        self.app.post(
+            '/api/v1/applicants',
+            data=json.dumps(dict(first_name='bar', last_name="Kirtfield",
+                                 school='VCU', position='dev engineer', degree='eyesight')),
+            content_type='application/json',
+            follow_redirects=True
+        )
+        self.app.post(
+            '/api/v1/applicants',
+            data=json.dumps(dict(first_name='Ryan', last_name="Kirtfield",
+                                 school='Penn State', position='dev engineer', degree='mathematics')),
+            content_type='application/json',
+            follow_redirects=True
+        )
+        self.app.post(
+            '/api/v1/applicants',
+            data=json.dumps(dict(first_name='Little', last_name="John",
+                                 school='VT', position='Friend', degree='Health')),
+            content_type='application/json',
+            follow_redirects=True
+        )
+        self.app.post(
+            '/api/v1/applicants',
+            data=json.dumps(dict(first_name='Lion', last_name="Welsh",
+                                 school='Harvard', position='None', degree='good')),
+            content_type='application/json',
+            follow_redirects=True
+        )
+    ####################
+    ##POSTING ENTRIES###
+    ####################
 
-        # # Disable sending emails during unit testing
-        # mail.init_app(app)
-        # self.assertEqual(app.debug, False)
-
-    # executed after each test
-    def tearDown(self):
-        pass
+    def test_post_app1(self):
+        tester = app.test_client(self)
+        res = self.app.post(
+            '/api/v1/applicants',
+            data=json.dumps(dict(first_name='bar', last_name="Kirtfield",
+                                 school='VCU', position='dev engineer', degree='eyesight')),
+            content_type='application/json',
+            follow_redirects=True
+        )
+        self.assertEqual(res.status_code, 201)
+    ####################
+    ##Testing Routes####
+    ####################
 
     def test_index(self):
         tester = app.test_client(self)
@@ -44,10 +81,13 @@ class TestCase(unittest.TestCase):
 
     def test_fetch_application(self):
         tester = app.test_client(self)
-        res = tester.get('/api/v1/applicants/22',
+        res = tester.get('/api/v1/applicants/2',
                          content_type='application/json')
         self.assertEqual(res.status_code, 200)
 
+    ####################
+    ##FETCHING DATA#####
+    ####################
     def test_fetch_application_nonexist(self):
         tester = app.test_client(self)
         res = tester.get('/api/v1/applicants/200',
@@ -62,31 +102,23 @@ class TestCase(unittest.TestCase):
 
     def test_delete_exists_index(self):
         tester = app.test_client(self)
-        res = tester.delete('/api/v1/applicants/35',
+        res = tester.delete('/api/v1/applicants/1',
                             content_type='application/json')
         self.assertEqual(res.status_code, 200)
 
     def test_fetch_application_nonexist_after_delete(self):
         tester = app.test_client(self)
-        res = tester.get('/api/v1/applicants/2',
+        res = tester.get('/api/v1/applicants/1',
                          content_type='application/json')
         self.assertEqual(res.status_code, 404)
-
-    def test_post_app(self):
-        tester = app.test_client(self)
-        res = self.app.post(
-            '/api/v1/applicants',
-            data=json.dumps(dict(first_name='bar', last_name="Kirtfield",
-                                 school='VCU', position='dev engineer', degree='eyesight')),
-            content_type='application/json',
-            follow_redirects=True
-        )
-        self.assertEqual(res.status_code, 201)
+    ####################
+    ##Updating ENTRIES##
+    ####################
 
     def test_update_some_prop(self):
         tester = app.test_client(self)
         res = self.app.put(
-            '/api/v1/applicants/7',
+            '/api/v1/applicants/2',
             data=json.dumps(dict(first_name='bar')),
             content_type='application/json',
             follow_redirects=True
@@ -96,7 +128,7 @@ class TestCase(unittest.TestCase):
     def test_update_all_prop(self):
         tester = app.test_client(self)
         res = self.app.put(
-            '/api/v1/applicants/7',
+            '/api/v1/applicants/2',
             data=json.dumps(dict(first_name='bar', last_name="Kirtfield",
                                  school='VCU', position='dev engineer', degree='eyesight')),
             content_type='application/json',
@@ -174,4 +206,7 @@ class TestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
+    # from db import db
+    # db.drop_all()
+    # db.create_all()
     unittest.main()

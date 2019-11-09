@@ -1,22 +1,23 @@
 # Keith Kirtfield
 # Database
-# TODO uploading and retrieving data // Smart Selection
+import datetime
 import sqlite3
 from flask import jsonify
+from sqlalchemy.orm.exc import NoResultFound
 from db import db
 from models.applicants import Applicant
 from models.positions import Positions
 from models.errors import Errors
-import datetime
 
 
 def add_application(request):
     response = []
     try:
         for x in request:
-            applicant = Applicant(first_name=x['first_name'], last_name=x['last_name'],
-                                  school=x['school'], degree=x['degree'], date=datetime.datetime.now())
-            position = Positions(title=x['position'], applicant=applicant)
+            applicant = Applicant(first_name=x['first_name'].lower(), last_name=x['last_name'].lower(),
+                                  school=x['school'].lower(), degree=x['degree'].lower(), date=datetime.datetime.now())
+            position = Positions(
+                title=x['position'].lower(), applicant=applicant)
             response.append(applicant)
             db.session.add(applicant)
             db.session.add(position)
@@ -38,8 +39,38 @@ def retrieve_application(app_id):
             'count': 1,
             'data': application.toJson()
         }), 200
-    except:
+    except AttributeError:
         return Errors('Unable To Find Application', 404).toJson()
+
+
+def retrieve_application_firstname(app_id):
+    app_id = app_id.lower()
+    try:
+        response = db.session.query(
+            Applicant).filter_by(first_name=app_id).all()
+        return jsonify({
+            'success': True,
+            'count': len(response),
+            'data': list(map(lambda x: x.toJson(), response))
+        }), 200
+    except AttributeError:
+        return Errors('Unable To Search Application with First Name: {}'.format(app_id), 404).toJson()
+
+
+def retrieve_application_school(school):
+    school = school.lower()
+    try:
+        response = db.session.query(
+            Applicant).filter_by(school=school).all()
+        # if len(response) == 0:
+        #     return Errors('Unable To Search Application with School: {}'.format(school), 404).toJson()
+        return jsonify({
+            'success': True,
+            'count': len(response),
+            'data': list(map(lambda x: x.toJson(), response))
+        }), 200
+    except AttributeError:
+        return Errors('Unable To Search Applications with School'.format(school), 404).toJson()
 
 
 def retrieve_applicants():
@@ -61,7 +92,7 @@ def update_application(app_id, req):
             'count': 1,
             'data': application.toJson()
         }), 200
-    except:
+    except NoResultFound:
         return Errors('Unable To Find Application', 404).toJson()
 
 
@@ -74,5 +105,21 @@ def delete_application(app_id):
             'success': True,
             'data': []
         }), 200
-    except:
+    except NoResultFound:
         return Errors('Unable To Find Application', 404).toJson()
+
+
+def valid_request(req):
+    errors = []
+    for req in req:
+        if req['first_name'] is None:
+            errors.append("Please include a first name")
+        if req['last_name'] is None:
+            errors.append("Please include a last name")
+        if req['school'] is None:
+            errors.append("Please include a school")
+        if req['position'] is None:
+            errors.append("Please include a position")
+        if req['degree'] is None:
+            errors.append("Please include a degree")
+    return errors

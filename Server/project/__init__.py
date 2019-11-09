@@ -7,7 +7,8 @@ from models.applicants import Applicant
 from models.positions import Positions
 from models.errors import Errors
 from database import (retrieve_applicants, add_application,
-                      update_application, delete_application, retrieve_application)
+                      update_application, delete_application, retrieve_application, retrieve_application_firstname,
+                      retrieve_application_school)
 from db import db
 
 app = Flask(__name__)
@@ -53,4 +54,18 @@ def modifyApplicants(app_id):
         return delete_application(app_id)
     if request.method == 'GET':
         return retrieve_application(app_id)
+    return Errors('Not a Valid HTTP Request', 405).toJson()
+
+
+@app.route('/api/v1/applicants/firstname/<first_name>', methods=['PUT', 'DELETE', 'GET', 'POST'])
+def retrieve_app_name(first_name):
+    if request.method == 'GET':
+        return retrieve_application_firstname(first_name)
+    return Errors('Not a Valid HTTP Request', 405).toJson()
+
+
+@app.route('/api/v1/applicants/school/<school>', methods=['PUT', 'DELETE', 'GET', 'POST'])
+def retrieve_app_schools(school):
+    if request.method == 'GET':
+        return retrieve_application_school(school)
     return Errors('Not a Valid HTTP Request', 405).toJson()
