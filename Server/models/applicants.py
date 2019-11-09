@@ -1,3 +1,4 @@
+# App class
 from db import db
 
 

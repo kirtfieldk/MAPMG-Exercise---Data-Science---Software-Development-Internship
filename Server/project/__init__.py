@@ -25,11 +25,11 @@ def create_tables():
 
 @app.route('/')
 def hello_world():
-    return('Hey, we have Flask in a Ddededocker container!')
+    return("Keith Kirtfield's simple api!")
 
 # GET all applicants
 # POST numerouse or one application
-@app.route("/api/v1/applicants", methods=['GET', 'POST', 'PUT', 'DELETE'])
+@app.route('/api/v1/applicants', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def getConsumers():
     if request.method == 'GET':
         return retrieve_applicants()
@@ -56,14 +56,14 @@ def modifyApplicants(app_id):
         return retrieve_application(app_id)
     return Errors('Not a Valid HTTP Request', 405).toJson()
 
-
+# GET all apps via firstname
 @app.route('/api/v1/applicants/firstname/<first_name>', methods=['PUT', 'DELETE', 'GET', 'POST'])
 def retrieve_app_name(first_name):
     if request.method == 'GET':
         return retrieve_application_firstname(first_name)
     return Errors('Not a Valid HTTP Request', 405).toJson()
 
-
+# GET all apps via school
 @app.route('/api/v1/applicants/school/<school>', methods=['PUT', 'DELETE', 'GET', 'POST'])
 def retrieve_app_schools(school):
     if request.method == 'GET':

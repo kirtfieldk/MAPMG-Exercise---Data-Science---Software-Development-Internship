@@ -1,3 +1,4 @@
+# Position class
 from db import db
 
 
