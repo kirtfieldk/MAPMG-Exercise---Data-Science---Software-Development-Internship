@@ -33,21 +33,21 @@ class TestCase(unittest.TestCase):
         self.app.post(
             '/api/v1/applicants',
             data=json.dumps(dict(first_name='Ryan', last_name="Kirtfield",
-                                 school='Penn State', position='fisher', degree='mathematics')),
+                                 school='Penn State', position='dev intern', degree='mathematics')),
             content_type='application/json',
             follow_redirects=True
         )
         self.app.post(
             '/api/v1/applicants',
             data=json.dumps(dict(first_name='Little', last_name="John",
-                                 school='VT', position='cook', degree='Health')),
+                                 school='VT', position='dev intern', degree='Health')),
             content_type='application/json',
             follow_redirects=True
         )
         self.app.post(
             '/api/v1/applicants',
             data=json.dumps(dict(first_name='Lion', last_name="Welsh",
-                                 school='Harvard', position='fisher', degree='good')),
+                                 school='Harvard', position='dev intern', degree='good')),
             content_type='application/json',
             follow_redirects=True
         )
@@ -71,7 +71,7 @@ class TestCase(unittest.TestCase):
         res = self.app.post(
             '/api/v1/applicants',
             data=json.dumps(dict(
-                school='VCU', position='dev engineer', degree='eyesight')),
+                school='VCU', position='dev intern', degree='eyesight')),
             content_type='application/json',
             follow_redirects=True
         )
@@ -257,7 +257,4 @@ class TestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # from db import db
-    # db.drop_all()
-    # db.create_all()
     unittest.main()

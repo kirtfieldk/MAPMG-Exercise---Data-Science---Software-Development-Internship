@@ -8,7 +8,7 @@ class Positions(db.Model):
     position_id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(250))
     app_id = db.Column(db.Integer, db.ForeignKey('applicants.id'))
-    positions = ['dev intern', 'fisher', 'cook', 'hvac mechanic']
+    positions = ['dev intern']
 
     def check_error(self):
         match = []
@@ -21,10 +21,7 @@ class Positions(db.Model):
             return False
 
     def open_positions(self):
-        str = ""
-        for x in self.positions:
-            str = str + x + ", "
-        return str
+        return self.positions[0]
 
     def toJson(self):
         return {

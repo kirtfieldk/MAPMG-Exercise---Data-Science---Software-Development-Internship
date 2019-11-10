@@ -25,7 +25,7 @@ def add_application(request):
             position = Positions(
                 title=x['position'].lower(), applicant=applicant)
             if position.check_error() == True:
-                return Errors('Only Open Positions: {}'.format(position.open_positions()), 400).toJson()
+                return Errors('Only Current Open Positions: {}'.format(position.open_positions()), 400).toJson()
             else:
                 response.append(applicant)
                 applicant.save_to_db()
@@ -153,16 +153,8 @@ def valid_request(req):
     errors = []
     for x in req:
         try:
-            if x['last_name'] is None:
-                errors.append({'msg': "Please include a first name"})
-            if len(x['last_name']) == 0:
-                errors.append({'msg': "Please include a last name"})
-            if x['school'] is None:
-                errors.append({'msg': "Please include a school"})
-            if x['position'] is None:
-                errors.append({'msg': "Please include a position"})
-            if x['degree'] is None:
-                errors.append({'msg': "Please include a degree"})
+            if x['last_name'] or x['last_name'] or x['school'] or x['position'] or x['degree'] is None:
+                pass
         except KeyError:
             errors.append({'msg': 'Missing Important Keys'})
     return errors
