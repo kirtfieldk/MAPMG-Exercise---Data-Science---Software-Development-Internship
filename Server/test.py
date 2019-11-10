@@ -26,28 +26,28 @@ class TestCase(unittest.TestCase):
         self.app.post(
             '/api/v1/applicants',
             data=json.dumps(dict(first_name='bar', last_name="Kirtfield",
-                                 school='VCU', position='dev engineer', degree='eyesight')),
+                                 school='VCU', position='dev intern', degree='eyesight')),
             content_type='application/json',
             follow_redirects=True
         )
         self.app.post(
             '/api/v1/applicants',
             data=json.dumps(dict(first_name='Ryan', last_name="Kirtfield",
-                                 school='Penn State', position='dev engineer', degree='mathematics')),
+                                 school='Penn State', position='fisher', degree='mathematics')),
             content_type='application/json',
             follow_redirects=True
         )
         self.app.post(
             '/api/v1/applicants',
             data=json.dumps(dict(first_name='Little', last_name="John",
-                                 school='VT', position='Friend', degree='Health')),
+                                 school='VT', position='cook', degree='Health')),
             content_type='application/json',
             follow_redirects=True
         )
         self.app.post(
             '/api/v1/applicants',
             data=json.dumps(dict(first_name='Lion', last_name="Welsh",
-                                 school='Harvard', position='None', degree='good')),
+                                 school='Harvard', position='fisher', degree='good')),
             content_type='application/json',
             follow_redirects=True
         )
@@ -60,7 +60,7 @@ class TestCase(unittest.TestCase):
         res = self.app.post(
             '/api/v1/applicants',
             data=json.dumps(dict(first_name='bar', last_name="Kirtfield",
-                                 school='VCU', position='dev engineer', degree='eyesight')),
+                                 school='VCU', position='dev intern', degree='eyesight')),
             content_type='application/json',
             follow_redirects=True
         )
@@ -72,6 +72,17 @@ class TestCase(unittest.TestCase):
             '/api/v1/applicants',
             data=json.dumps(dict(
                 school='VCU', position='dev engineer', degree='eyesight')),
+            content_type='application/json',
+            follow_redirects=True
+        )
+        self.assertEqual(res.status_code, 400)
+
+    def test_post_invalid_position(self):
+        tester = app.test_client(self)
+        res = self.app.post(
+            '/api/v1/applicants',
+            data=json.dumps(dict(
+                school='VCU', position='cat caller', degree='eyesight')),
             content_type='application/json',
             follow_redirects=True
         )
@@ -229,7 +240,7 @@ class TestCase(unittest.TestCase):
     def test_seach_name(self):
         tester = app.test_client(self)
         res = self.app.get(
-            '/api/v1/applicants/firstname/keith',
+            '/api/v1/applicants/lastname/kirtfield',
             data=json.dumps(dict()),
             follow_redirects=True
         )
@@ -238,7 +249,7 @@ class TestCase(unittest.TestCase):
     def test_search_name_no_results(self):
         tester = app.test_client(self)
         res = self.app.get(
-            '/api/v1/applicants/firstname/jwoefjei',
+            '/api/v1/applicants/lastname/jwoefjei',
             data=json.dumps(dict()),
             follow_redirects=True
         )

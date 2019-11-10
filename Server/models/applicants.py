@@ -1,5 +1,7 @@
 # App class
 from db import db
+from models.positions import Positions
+from models.errors import Errors
 
 
 class Applicant(db.Model):
@@ -33,6 +35,14 @@ class Applicant(db.Model):
             'date': self.date
         }
 
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete_db(self):
+        db.session.delete(self)
+        db.session.commit()
+
     def update(self, req):
         for x in req:
             if x == 'first_name' and req[x] != self.first_name:
@@ -40,7 +50,11 @@ class Applicant(db.Model):
             if x == 'last_name' and req[x] != self.last_name:
                 self.last_name = req[x]
             if x == 'position' and req[x] != self.position[0].title:
-                self.position[0].title = req[x]
+                pos = Positions(title=req[x].lower(), applicant=self)
+                if pos.check_error():
+                    pass
+                else:
+                    self.position[0].title = req[x]
             if x == 'school' and req[x] != self.school:
                 self.school = req[x]
             if x == 'degree' and req[x] != self.degree:

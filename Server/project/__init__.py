@@ -6,10 +6,11 @@ from flask import Flask, request, jsonify
 from models.applicants import Applicant
 from models.positions import Positions
 from models.errors import Errors
-from database import (retrieve_applicants, add_application,
-                      update_application, delete_application, retrieve_application, retrieve_application_firstname,
-                      retrieve_application_school)
 from db import db
+from database import (retrieve_applicants, add_application,
+                      update_application, delete_application, retrieve_application, retrieve_application_lastname,
+                      retrieve_application_school)
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///applicants-collection.db'
@@ -20,6 +21,7 @@ db.init_app(app)
 
 @app.before_first_request
 def create_tables():
+    # db.drop_all()
     db.create_all()
 
 
@@ -56,11 +58,11 @@ def modifyApplicants(app_id):
         return retrieve_application(app_id)
     return Errors('Not a Valid HTTP Request', 405).toJson()
 
-# GET all apps via firstname
-@app.route('/api/v1/applicants/firstname/<first_name>', methods=['PUT', 'DELETE', 'GET', 'POST'])
-def retrieve_app_name(first_name):
+# GET all apps via last name
+@app.route('/api/v1/applicants/lastname/<last_name>', methods=['PUT', 'DELETE', 'GET', 'POST'])
+def retrieve_app_name(last_name):
     if request.method == 'GET':
-        return retrieve_application_firstname(first_name)
+        return retrieve_application_lastname(last_name)
     return Errors('Not a Valid HTTP Request', 405).toJson()
 
 # GET all apps via school

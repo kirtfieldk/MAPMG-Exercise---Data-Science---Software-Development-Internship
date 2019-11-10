@@ -24,10 +24,12 @@ def add_application(request):
                                   school=x['school'].lower(), degree=x['degree'].lower(), date=datetime.datetime.now())
             position = Positions(
                 title=x['position'].lower(), applicant=applicant)
-            response.append(applicant)
-            db.session.add(applicant)
-            db.session.add(position)
-            db.session.commit()
+            if position.check_error() == True:
+                return Errors('Only Open Positions: {}'.format(position.open_positions()), 400).toJson()
+            else:
+                response.append(applicant)
+                applicant.save_to_db()
+                position.save_to_db()
     except sqlite3.OperationalError:
         return Errors('Table Not Open', 500).toJson()
     except TypeError:
@@ -75,11 +77,13 @@ def retrieve_application(app_id):
 # /api/v1/applicants/firstname/:app_id
 
 
-def retrieve_application_firstname(app_id):
-    app_id = app_id.lower()
+def retrieve_application_lastname(last_name):
+    last_name = last_name.lower()
     try:
+        print(last_name)
         response = db.session.query(
-            Applicant).filter_by(first_name=app_id).all()
+            Applicant).filter_by(last_name="kirtfield").all()
+        print(response)
         return jsonify({
             'success': True,
             'count': len(response),
@@ -88,7 +92,7 @@ def retrieve_application_firstname(app_id):
     except sqlite3.OperationalError:
         return Errors('Table Not Open', 500).toJson()
     except AttributeError:
-        return Errors('Unable To Search Application with First Name: {}'.format(app_id), 404).toJson()
+        return Errors('Unable To Search Application with First Name: {}'.format(last_name), 404).toJson()
 
 # /api/v1/applicants/school/:school
 
@@ -98,8 +102,6 @@ def retrieve_application_school(school):
     try:
         response = db.session.query(
             Applicant).filter_by(school=school).all()
-        # if len(response) == 0:
-        #     return Errors('Unable To Search Application with School: {}'.format(school), 404).toJson()
         return jsonify({
             'success': True,
             'count': len(response),
@@ -118,8 +120,7 @@ def update_application(app_id, req):
     try:
         application = db.session.query(Applicant).filter_by(id=app_id).one()
         application.update(req)
-        db.session.add(application)
-        db.session.commit()
+        application.save_to_db()
         return jsonify({
             'success': True,
             'count': 1,
@@ -137,8 +138,7 @@ def update_application(app_id, req):
 def delete_application(app_id):
     try:
         deleteApp = db.session.query(Applicant).filter_by(id=app_id).one()
-        db.session.delete(deleteApp)
-        db.session.commit()
+        deleteApp.delete_db()
         return jsonify({
             'success': True,
             'data': []
@@ -153,7 +153,7 @@ def valid_request(req):
     errors = []
     for x in req:
         try:
-            if x['first_name'] is None:
+            if x['last_name'] is None:
                 errors.append({'msg': "Please include a first name"})
             if len(x['last_name']) == 0:
                 errors.append({'msg': "Please include a last name"})
