@@ -17,6 +17,7 @@ To use this api:
 
 The request body should be simple JSON
 For Positions the only open positions are
+Schools schould be posted in acronyms like VT, VCU, AZ, or UCB
 
 ```
 dev intern
