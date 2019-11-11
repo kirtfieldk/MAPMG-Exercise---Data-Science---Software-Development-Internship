@@ -2,7 +2,11 @@ import unittest
 import os
 from flask import json
 from project import app, db
-
+####################################
+# IF DOCKER CONTAINER WILL NOT RUN #
+# COMMENT THE unittest.main() ON ###
+# BOTTOM OF FILE ###################
+####################################
 
 #################
 ###TEST CASES####

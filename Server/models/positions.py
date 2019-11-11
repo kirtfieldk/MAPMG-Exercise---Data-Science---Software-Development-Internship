@@ -23,7 +23,7 @@ class Positions(db.Model):
     def open_positions(self):
         return self.positions[0]
 
-    def toJson(self):
+    def to_json(self):
         return {
             'position': self.title
         }

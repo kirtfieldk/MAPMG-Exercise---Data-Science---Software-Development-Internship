@@ -38,9 +38,9 @@ def get_apps():
     if request.method == 'POST':
         response = request.get_json() if request.is_json else "Not valid"
         if response == 'Not valid':
-            return Errors('Expecting A JSON Object', 400).toJson()
+            return Errors('Expecting A JSON Object', 400).to_json()
         return add_application(response)
-    return Errors('Not a Valid HTTP Request on This Route', 405).toJson()
+    return Errors('Not a Valid HTTP Request on This Route', 405).to_json()
 
 # PUT update application
 # DELETE delete application
@@ -50,24 +50,24 @@ def modify_applicants(app_id):
     if request.method == 'PUT':
         response = request.get_json() if request.is_json else "Not valid"
         if response == 'Not valid':
-            return Errors('Expecting A JSON Object', 400).toJson()
+            return Errors('Expecting A JSON Object', 400).to_json()
         return update_application(app_id, response)
     if request.method == 'DELETE':
         return delete_application(app_id)
     if request.method == 'GET':
         return retrieve_application(app_id)
-    return Errors('Not a Valid HTTP Request on This Route', 405).toJson()
+    return Errors('Not a Valid HTTP Request on This Route', 405).to_json()
 
 # GET all apps via last name
 @app.route('/api/v1/applicants/lastname/<last_name>', methods=['PUT', 'DELETE', 'GET', 'POST'])
 def retrieve_app_name(last_name):
     if request.method == 'GET':
         return retrieve_application_lastname(last_name)
-    return Errors('Not a Valid HTTP Request on This Route', 405).toJson()
+    return Errors('Not a Valid HTTP Request on This Route', 405).to_json()
 
 # GET all apps via school
 @app.route('/api/v1/applicants/school/<school>', methods=['PUT', 'DELETE', 'GET', 'POST'])
 def retrieve_app_schools(school):
     if request.method == 'GET':
         return retrieve_application_school(school)
-    return Errors('Not a Valid HTTP Request on This Route', 405).toJson()
+    return Errors('Not a Valid HTTP Request on This Route', 405).to_json()

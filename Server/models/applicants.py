@@ -22,7 +22,7 @@ class Applicant(db.Model):
         self.degree = degree
         self.date = date
 
-    def toJson(self):
+    def to_json(self):
         return {
             'id': self.id,
             'first_name': self.first_name,

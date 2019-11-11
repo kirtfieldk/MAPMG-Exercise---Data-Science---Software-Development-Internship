@@ -7,7 +7,7 @@ class Errors():
         self.message = message
         self.code = code
 
-    def toJson(self):
+    def to_json(self):
         return jsonify({
             'success': False,
             'msg': self.message

@@ -25,19 +25,19 @@ def add_application(request):
             position = Positions(
                 title=x['position'].lower(), applicant=applicant)
             if position.check_error() == True:
-                return Errors('Only Current Open Positions: {}'.format(position.open_positions()), 400).toJson()
+                return Errors('Only Current Open Positions: {}'.format(position.open_positions()), 400).to_json()
             else:
                 response.append(applicant)
                 applicant.save_to_db()
                 position.save_to_db()
     except sqlite3.OperationalError:
-        return Errors('Table Not Open', 500).toJson()
+        return Errors('Table Not Open', 500).to_json()
     except TypeError:
         return add_application([request])
     return jsonify({
         "count": len(response),
         "success": True,
-        "data": list(map(lambda x: x.toJson(), response))
+        "data": list(map(lambda x: x.to_json(), response))
     }), 201
 
 # GET all apps
@@ -48,11 +48,11 @@ def retrieve_applicants():
     try:
         return jsonify({
             'success': True,
-            'data': list(map(lambda x: x.toJson(), Applicant.query.all())),
+            'data': list(map(lambda x: x.to_json(), Applicant.query.all())),
             'count': len(Applicant.query.all())
         }), 200
     except sqlite3.OperationalError:
-        return Errors('Table Not Open', 500).toJson()
+        return Errors('Table Not Open', 500).to_json()
 
 ##############################
 ##GET apps by search methods##
@@ -67,12 +67,12 @@ def retrieve_application(app_id):
         return jsonify({
             'success': True,
             'count': 1,
-            'data': application.toJson()
+            'data': application.to_json()
         }), 200
     except sqlite3.OperationalError:
-        return Errors('Table Not Open', 500).toJson()
+        return Errors('Table Not Open', 500).to_json()
     except AttributeError:
-        return Errors('Unable To Find Application', 404).toJson()
+        return Errors('Unable To Find Application', 404).to_json()
 
 # /api/v1/applicants/firstname/:app_id
 
@@ -80,19 +80,17 @@ def retrieve_application(app_id):
 def retrieve_application_lastname(last_name):
     last_name = last_name.lower()
     try:
-        print(last_name)
         response = db.session.query(
-            Applicant).filter_by(last_name="kirtfield").all()
-        print(response)
+            Applicant).filter_by(last_name=last_name).all()
         return jsonify({
             'success': True,
             'count': len(response),
-            'data': list(map(lambda x: x.toJson(), response))
+            'data': list(map(lambda x: x.to_json(), response))
         }), 200
     except sqlite3.OperationalError:
-        return Errors('Table Not Open', 500).toJson()
+        return Errors('Table Not Open', 500).to_json()
     except AttributeError:
-        return Errors('Unable To Search Application with First Name: {}'.format(last_name), 404).toJson()
+        return Errors('Unable To Search Application with First Name: {}'.format(last_name), 404).to_json()
 
 # /api/v1/applicants/school/:school
 
@@ -105,12 +103,12 @@ def retrieve_application_school(school):
         return jsonify({
             'success': True,
             'count': len(response),
-            'data': list(map(lambda x: x.toJson(), response))
+            'data': list(map(lambda x: x.to_json(), response))
         }), 200
     except sqlite3.OperationalError:
-        return Errors('Table Not Open', 500).toJson()
+        return Errors('Table Not Open', 500).to_json()
     except AttributeError:
-        return Errors('Unable To Search Applications with School'.format(school), 404).toJson()
+        return Errors('Unable To Search Applications with School'.format(school), 404).to_json()
 
 # PUT an app
 # /api/v1/applicants/:app_id
@@ -124,12 +122,12 @@ def update_application(app_id, req):
         return jsonify({
             'success': True,
             'count': 1,
-            'data': application.toJson()
+            'data': application.to_json()
         }), 200
     except sqlite3.OperationalError:
-        return Errors('Table Not Open', 500).toJson()
+        return Errors('Table Not Open', 500).to_json()
     except NoResultFound:
-        return Errors('Unable To Find Application', 404).toJson()
+        return Errors('Unable To Find Application', 404).to_json()
 
 # DELETE app
 # /api/v1/applicants/:app_id
@@ -144,7 +142,7 @@ def delete_application(app_id):
             'data': []
         }), 200
     except NoResultFound:
-        return Errors('Unable To Find Application', 404).toJson()
+        return Errors('Unable To Find Application', 404).to_json()
 
 # HELPER METHOD
 
