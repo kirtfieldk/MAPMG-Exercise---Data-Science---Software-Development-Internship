@@ -7,6 +7,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from db import db
 from models.applicants import Applicant
 from models.positions import Positions
+from models.admin import Admin
 from models.errors import Errors
 
 # POST METHOD
@@ -156,3 +157,17 @@ def valid_request(req):
         except KeyError:
             errors.append({'msg': 'Missing Important Keys'})
     return errors
+
+
+def create_admin(req):
+    print(req['user_name'])
+    try:
+        admin = Admin(user_name=req['user_name'], password=req['password'])
+        admin.save_to_db()
+        return admin.to_json()
+    except KeyError:
+        errors.append({'msg': 'Missing Important Keys'})
+
+
+def login(req):
+    return "Jello"

@@ -9,7 +9,7 @@ from models.positions import Positions
 from models.errors import Errors
 from database import (retrieve_applicants, add_application,
                       update_application, delete_application, retrieve_application, retrieve_application_lastname,
-                      retrieve_application_school)
+                      retrieve_application_school, create_admin, login)
 
 
 app = Flask(__name__)
@@ -29,6 +29,19 @@ def create_tables():
 def hello_world():
     return("Keith Kirtfield's simple api!")
 
+# POST create Admin
+@app.route('/api/v1/admin', methods=['POST'])
+def admin():
+    if request.method == 'POST':
+        return create_admin(request.get_json())
+    return("HEllo")
+
+
+@app.route('/api/v1/admin/login', methods=['POST'])
+def admin_login():
+    if request.method == ['POST']:
+        return login(request.get_json())
+    return "Hello"
 # GET all applicants
 # POST numerouse or one application
 @app.route('/api/v1/applicants', methods=['GET', 'POST', 'PUT', 'DELETE'])
