@@ -3,6 +3,8 @@
 
 import sys
 from flask import Flask, request, jsonify
+from flask_login import LoginManager
+from flask_cors import CORS
 from db import db
 from models.applicants import Applicant
 from models.positions import Positions
@@ -13,12 +15,13 @@ from database import (retrieve_applicants, add_application,
 
 
 app = Flask(__name__)
+login_manager = LoginManager()
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///applicants-collection.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 db.init_app(app)
-
-
+login_manager.init_app(app)
+CORS(app)
 @app.before_first_request
 def create_tables():
     # db.drop_all()
@@ -75,12 +78,16 @@ def modify_applicants(app_id):
 @app.route('/api/v1/applicants/lastname/<last_name>', methods=['PUT', 'DELETE', 'GET', 'POST'])
 def retrieve_app_name(last_name):
     if request.method == 'GET':
-        return retrieve_application_lastname(last_name)
+        return Applicant.find_by_lastname(last_name)
     return Errors('Not a Valid HTTP Request on This Route', 405).to_json()
 
 # GET all apps via school
 @app.route('/api/v1/applicants/school/<school>', methods=['PUT', 'DELETE', 'GET', 'POST'])
 def retrieve_app_schools(school):
     if request.method == 'GET':
-        return retrieve_application_school(school)
+        return Applicant.find_by_school(school)
     return Errors('Not a Valid HTTP Request on This Route', 405).to_json()
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)

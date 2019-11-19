@@ -3,6 +3,7 @@
 import datetime
 import sqlite3
 from flask import jsonify
+from werkzeug.security import safe_str_cmp
 from sqlalchemy.orm.exc import NoResultFound
 from db import db
 from models.applicants import Applicant
@@ -97,19 +98,7 @@ def retrieve_application_lastname(last_name):
 
 
 def retrieve_application_school(school):
-    school = school.lower()
-    try:
-        response = db.session.query(
-            Applicant).filter_by(school=school).all()
-        return jsonify({
-            'success': True,
-            'count': len(response),
-            'data': list(map(lambda x: x.to_json(), response))
-        }), 200
-    except sqlite3.OperationalError:
-        return Errors('Table Not Open', 500).to_json()
-    except AttributeError:
-        return Errors('Unable To Search Applications with School'.format(school), 404).to_json()
+    return Applicant.find_by_school(school)
 
 # PUT an app
 # /api/v1/applicants/:app_id
@@ -167,6 +156,17 @@ def create_admin(req):
         return admin.to_json()
     except KeyError:
         errors.append({'msg': 'Missing Important Keys'})
+
+
+def auth(username, password):
+    admin = db.session.query(Admin).filter_by(user_name=username).one()
+    if admin and safe_str_cmp(admin.password.encode('utf-8'), password.encode('utf-8')):
+        return admin
+
+
+def identity(payload):
+    user_id = payload['identity']
+    return db.session.query(Admin).filter_by()
 
 
 def login(req):
