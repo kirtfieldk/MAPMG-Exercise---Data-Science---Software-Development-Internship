@@ -1,6 +1,7 @@
 # App class
 from flask import jsonify
 from db import db
+from sqlalchemy.orm.exc import NoResultFound
 from models.positions import Positions
 from models.errors import Errors
 
@@ -60,6 +61,7 @@ class Applicant(db.Model):
                 self.school = req[x]
             if x == 'degree' and req[x] != self.degree:
                 self.degree = req[x]
+
     @classmethod
     def find_by_id(cls, id):
         try:
@@ -71,6 +73,7 @@ class Applicant(db.Model):
             }), 200
         except AttributeError:
             return Errors('Unable To Find Application', 404).to_json()
+
     @classmethod
     def find_by_school(cls, school):
         school = school.lower()
@@ -83,7 +86,7 @@ class Applicant(db.Model):
             }), 200
         except AttributeError:
             return Errors('Unable To Search Applications with School'.format(school), 404).to_json()
-        
+
     @classmethod
     def find_by_lastname(cls, lastname):
         lastname = lastname.lower()
@@ -96,7 +99,7 @@ class Applicant(db.Model):
             }), 200
         except AttributeError:
             return Errors('Unable To Search Application with Last Name: {}'.format(lastname), 404).to_json()
-        
+
     @classmethod
     def find_all_app(cls):
         return jsonify({

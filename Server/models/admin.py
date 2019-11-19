@@ -32,4 +32,4 @@ class Admin(db.Model):
         user = db.session.query(password=self.password)
         if user:
             return True
-        return false
+        return False

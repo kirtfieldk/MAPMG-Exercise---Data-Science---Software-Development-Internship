@@ -9,7 +9,7 @@ from db import db
 from models.applicants import Applicant
 from models.positions import Positions
 from models.errors import Errors
-from database import (add_application,
+from database import ( add_application,
                       update_application, delete_application, create_admin, login)
 
 

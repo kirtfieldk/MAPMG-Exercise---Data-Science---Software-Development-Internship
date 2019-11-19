@@ -42,16 +42,11 @@ def add_application(request):
         "data": list(map(lambda x: x.to_json(), response))
     }), 201
 
-
 ##############################
 ##GET apps by search methods##
 ##############################
 
 
-
-
-# PUT an app
-# /api/v1/applicants/:app_id
 
 def update_application(app_id, req):
     try:
