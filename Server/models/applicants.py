@@ -1,7 +1,6 @@
 # App class
 from flask import jsonify
 from db import db
-
 from models.positions import Positions
 from models.errors import Errors
 
@@ -97,3 +96,11 @@ class Applicant(db.Model):
             }), 200
         except AttributeError:
             return Errors('Unable To Search Application with Last Name: {}'.format(lastname), 404).to_json()
+        
+    @classmethod
+    def find_all_app(cls):
+        return jsonify({
+            'success': True,
+            'data': list(map(lambda x: x.to_json(), Applicant.query.all())),
+            'count': len(Applicant.query.all())
+        }), 200

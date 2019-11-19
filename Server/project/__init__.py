@@ -9,9 +9,8 @@ from db import db
 from models.applicants import Applicant
 from models.positions import Positions
 from models.errors import Errors
-from database import (retrieve_applicants, add_application,
-                      update_application, delete_application, retrieve_application, retrieve_application_lastname,
-                      retrieve_application_school, create_admin, login)
+from database import (add_application,
+                      update_application, delete_application, create_admin, login)
 
 
 app = Flask(__name__)
@@ -50,7 +49,7 @@ def admin_login():
 @app.route('/api/v1/applicants', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def get_apps():
     if request.method == 'GET':
-        return retrieve_applicants()
+        return Applicant.find_all_app()
     if request.method == 'POST':
         response = request.get_json() if request.is_json else "Not valid"
         if response == 'Not valid':
