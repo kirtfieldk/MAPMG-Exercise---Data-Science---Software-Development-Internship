@@ -9,3 +9,9 @@ services:
     volumes:
       # - /app/requirements.txt
       - ./Server:/app
+  client:
+    build:
+      context: client
+      dockerfile: dockerfile
+    ports:
+      - '3000:3000'

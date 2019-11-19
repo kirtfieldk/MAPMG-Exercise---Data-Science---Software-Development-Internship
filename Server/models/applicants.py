@@ -63,7 +63,15 @@ class Applicant(db.Model):
                 self.degree = req[x]
     @classmethod
     def find_by_id(cls, id):
-        return cls.query.filter_by(id=id).one()
+        try:
+            application = cls.query.filter_by(id=id).first()
+            return jsonify({
+                'success': True,
+                'count': 1,
+                'data': application.to_json()
+            }), 200
+        except AttributeError:
+            return Errors('Unable To Find Application', 404).to_json()
     @classmethod
     def find_by_school(cls, school):
         school = school.lower()

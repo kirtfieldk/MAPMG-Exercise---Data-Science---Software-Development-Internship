@@ -71,7 +71,7 @@ def modify_applicants(app_id):
     if request.method == 'DELETE':
         return delete_application(app_id)
     if request.method == 'GET':
-        return retrieve_application(app_id)
+        return Applicant.find_by_id(app_id)
     return Errors('Not a Valid HTTP Request on This Route', 405).to_json()
 
 # GET all apps via last name
