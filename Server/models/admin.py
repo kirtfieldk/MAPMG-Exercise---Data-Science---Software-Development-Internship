@@ -4,20 +4,22 @@ from models.errors import Errors
 
 
 class Admin(db.Model):
+    from project import login_manager
     __tablename__ = 'admin'
 
     id = db.Column(db.Integer, primary_key=True)
-    user_name = db.Column(db.String(250), nullable=False)
+    username = db.Column(db.String(250), nullable=False, unique=True)
     password = db.Column(db.String(250), nullable=False)
 
-    def __init__(self, user_name, password):
-        self.user_name = user_name
+    def __init__(self, username, password):
+        self.username = username
         self.password = password
 
     def to_json(self):
         return {
             'id': self.id,
-            'user_name': self.user_name
+            'username': self.username,
+            "password": self.password
         }
 
     def save_to_db(self):
@@ -28,8 +30,9 @@ class Admin(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    def login(self):
-        user = db.session.query(password=self.password)
+    @classmethod
+    def login(self, username, password):
+        user = db.session.query(password=self.password).one
         if user:
             return True
         return False
