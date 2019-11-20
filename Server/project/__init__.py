@@ -3,24 +3,25 @@
 
 import sys
 from flask import Flask, request, jsonify
+from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
-from flask_cors import CORS
 from db import db
 from models.applicants import Applicant
 from models.positions import Positions
 from models.errors import Errors
-from database import ( add_application,
-                      update_application, delete_application, create_admin, login)
+from database import (add_application, update_application,
+                      delete_application)
+from auth.admin import create_admin
 
 
 app = Flask(__name__)
-login_manager = LoginManager()
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///applicants-collection.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 db.init_app(app)
-login_manager.init_app(app)
-CORS(app)
+bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
+# CORS(app)
 @app.before_first_request
 def create_tables():
     # db.drop_all()
@@ -39,11 +40,11 @@ def admin():
     return("HEllo")
 
 
-@app.route('/api/v1/admin/login', methods=['POST'])
-def admin_login():
-    if request.method == ['POST']:
-        return login(request.get_json())
-    return "Hello"
+# @app.route('/api/v1/admin/login', methods=['POST'])
+# def admin_login():
+#     if request.method == ['POST']:
+#         return login(request.get_json())
+#     return "Hello"
 # GET all applicants
 # POST numerouse or one application
 @app.route('/api/v1/applicants', methods=['GET', 'POST', 'PUT', 'DELETE'])
@@ -86,7 +87,3 @@ def retrieve_app_schools(school):
     if request.method == 'GET':
         return Applicant.find_by_school(school)
     return Errors('Not a Valid HTTP Request on This Route', 405).to_json()
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.get(user_id)

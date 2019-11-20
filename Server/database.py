@@ -47,7 +47,6 @@ def add_application(request):
 ##############################
 
 
-
 def update_application(app_id, req):
     try:
         application = db.session.query(Applicant).filter_by(id=app_id).one()
@@ -90,28 +89,3 @@ def valid_request(req):
         except KeyError:
             errors.append({'msg': 'Missing Important Keys'})
     return errors
-
-
-def create_admin(req):
-    print(req['user_name'])
-    try:
-        admin = Admin(user_name=req['user_name'], password=req['password'])
-        admin.save_to_db()
-        return admin.to_json()
-    except KeyError:
-        errors.append({'msg': 'Missing Important Keys'})
-
-
-def auth(username, password):
-    admin = db.session.query(Admin).filter_by(user_name=username).one()
-    if admin and safe_str_cmp(admin.password.encode('utf-8'), password.encode('utf-8')):
-        return admin
-
-
-def identity(payload):
-    user_id = payload['identity']
-    return db.session.query(Admin).filter_by()
-
-
-def login(req):
-    return "Jello"
