@@ -5,7 +5,7 @@ import sqlite3
 from flask import jsonify
 from werkzeug.security import safe_str_cmp
 from sqlalchemy.orm.exc import NoResultFound
-from db import db
+from middlewear import db
 from models.applicants import Applicant
 from models.positions import Positions
 from models.admin import Admin

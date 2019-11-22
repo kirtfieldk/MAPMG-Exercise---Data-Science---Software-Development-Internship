@@ -1,10 +1,15 @@
 # App class
-from db import db
+from flask_login import UserMixin
+from middlewear import db, login_manager
 from models.errors import Errors
 
 
+@login_manager.user_loader
+def load_user(id):
+    return Admin.query.get(int(id))
+
+
 class Admin(db.Model):
-    from project import login_manager
     __tablename__ = 'admin'
 
     id = db.Column(db.Integer, primary_key=True)

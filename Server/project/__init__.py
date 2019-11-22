@@ -5,7 +5,7 @@ import sys
 from flask import Flask, request, jsonify
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
-from db import db
+from middlewear import db, login_manager
 from models.applicants import Applicant
 from models.positions import Positions
 from models.errors import Errors
@@ -15,12 +15,13 @@ from auth.admin import create_admin
 
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///applicants-collection.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 db.init_app(app)
 bcrypt = Bcrypt(app)
-login_manager = LoginManager(app)
+login_manager.init_app(app)
 # CORS(app)
 @app.before_first_request
 def create_tables():

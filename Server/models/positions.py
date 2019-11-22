@@ -1,5 +1,5 @@
 # Position class
-from db import db
+from middlewear import db
 
 
 class Positions(db.Model):

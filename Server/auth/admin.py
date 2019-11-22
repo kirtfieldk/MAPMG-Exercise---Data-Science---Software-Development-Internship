@@ -1,7 +1,7 @@
 from flask import jsonify
 from models.admin import Admin
 from models.errors import Errors
-from db import db
+from middlewear import db
 
 
 def create_admin(req):

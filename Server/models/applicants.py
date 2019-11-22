@@ -1,6 +1,6 @@
 # App class
 from flask import jsonify
-from db import db
+from middlewear import db
 from sqlalchemy.orm.exc import NoResultFound
 from models.positions import Positions
 from models.errors import Errors
