@@ -3,15 +3,15 @@
 
 import sys
 from flask import Flask, request, jsonify
-from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
-from middlewear import db, login_manager
+from middlewear import db, login_manager, bcrypt
 from models.applicants import Applicant
 from models.positions import Positions
 from models.errors import Errors
+from models.admin import Admin
 from database import (add_application, update_application,
                       delete_application)
-from auth.admin import create_admin
+from auth.admin import(create_admin, login)
 
 
 app = Flask(__name__)
@@ -20,7 +20,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///applicants-collection.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 db.init_app(app)
-bcrypt = Bcrypt(app)
+bcrypt.init_app(app)
 login_manager.init_app(app)
 # CORS(app)
 @app.before_first_request
@@ -41,11 +41,12 @@ def admin():
     return("HEllo")
 
 
-# @app.route('/api/v1/admin/login', methods=['POST'])
-# def admin_login():
-#     if request.method == ['POST']:
-#         return login(request.get_json())
-#     return "Hello"
+@app.route('/api/v1/admin/login', methods=['POST'])
+def admin_login():
+    res = request.get_json()
+    if request.method == 'POST':
+        return login(res['username'], res['password'])
+    return "Hello"
 # GET all applicants
 # POST numerouse or one application
 @app.route('/api/v1/applicants', methods=['GET', 'POST', 'PUT', 'DELETE'])

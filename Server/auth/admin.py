@@ -1,12 +1,16 @@
 from flask import jsonify
+from flask_login import login_user, current_user
 from models.admin import Admin
 from models.errors import Errors
-from middlewear import db
+from middlewear import db, bcrypt
+
+# POST api/v1/admin
 
 
 def create_admin(req):
-    from project import bcrypt
     try:
+        if current_user.is_authenticated:
+            return Errors("Already logedin", 400).to_json()
         if valid_username(req['username']):
             password = bcrypt.generate_password_hash(
                 req['password']).decode('utf-8')
@@ -16,6 +20,18 @@ def create_admin(req):
         return Errors("Username Already Taken", 400).to_json()
     except KeyError:
         errors.append({'msg': 'Missing Important Keys'})
+
+# POST api/v1/admin/login
+
+
+def login(username, password):
+    if current_user.is_authenticated:
+        return Errors("Already logedin", 400).to_json()
+    user = db.session.query(Admin).filter_by(username=username).first()
+    if user and bcrypt.check_password_hash(user.password, password):
+        login_user(user)
+        return jsonify({'success': True, "msg": "Login {}".format(username)})
+    return Errors("Could Not Login", 404).to_json()
 
 
 def valid_username(name):
