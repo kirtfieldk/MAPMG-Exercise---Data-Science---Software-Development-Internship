@@ -3,7 +3,7 @@
 
 import sys
 from flask import Flask, request, jsonify
-from flask_login import LoginManager
+from flask_login import LoginManager, login_required
 from middlewear import db, login_manager, bcrypt
 from models.applicants import Applicant
 from models.positions import Positions
@@ -11,7 +11,7 @@ from models.errors import Errors
 from models.admin import Admin
 from database import (add_application, update_application,
                       delete_application)
-from auth.admin import(create_admin, login)
+from auth.admin import(create_admin, login, logout)
 
 
 app = Flask(__name__)
@@ -47,9 +47,15 @@ def admin_login():
     if request.method == 'POST':
         return login(res['username'], res['password'])
     return "Hello"
+
+
+@app.route('/api/v1/admin/logout')
+def admin_logout():
+    return logout()
 # GET all applicants
 # POST numerouse or one application
 @app.route('/api/v1/applicants', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@login_required
 def get_apps():
     if request.method == 'GET':
         return Applicant.find_all_app()

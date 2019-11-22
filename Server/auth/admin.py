@@ -1,5 +1,5 @@
 from flask import jsonify
-from flask_login import login_user, current_user
+from flask_login import login_user, current_user, logout_user
 from models.admin import Admin
 from models.errors import Errors
 from middlewear import db, bcrypt
@@ -32,6 +32,11 @@ def login(username, password):
         login_user(user)
         return jsonify({'success': True, "msg": "Login {}".format(username)})
     return Errors("Could Not Login", 404).to_json()
+
+
+def logout():
+    logout_user()
+    return jsonify({"msg": "Successful logout"})
 
 
 def valid_username(name):
